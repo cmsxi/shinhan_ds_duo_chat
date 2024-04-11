@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Scanner;
 
 import shinhan_ds_duo_chat.model.User;
@@ -16,13 +15,12 @@ public class Start {
 
 	public Start() {
 		try {
-
 			// session setting
 			// session = new Session("1234", "최민서", "010-1234-1234", "1234");
 
 			Class.forName("oracle.jdbc.OracleDriver");
 
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "scott", "tiger");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "testuser", "test1234");
 		} catch (Exception e) {
 			e.printStackTrace();
 			exit();
@@ -164,8 +162,7 @@ public class Start {
 		
 		while(true) {
 			start.menu();
-		}
-		
+		}	
 		
 	}
 }

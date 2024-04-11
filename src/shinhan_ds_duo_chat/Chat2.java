@@ -9,19 +9,19 @@ import java.util.Scanner;
 
 import shinhan_ds_duo_chat.model.ChatRoom;
 
-public class Chat {
+public class Chat2 {
 	private static Scanner scanner = new Scanner(System.in);
 	private Connection conn;
 	private static Session session;
 	
 	public static void main(String[] args) {
-		session = new Session("a", "a", "010-1234-5678", "123");
+		session = new Session("b", "b", "010-1234-5678", "123");
 		
-		Chat chat = new Chat();
+		Chat2 chat = new Chat2();
 		chat.list();
 	}
 	
-	public Chat() {
+	public Chat2() {
 		try {
 			Class.forName("oracle.jdbc.OracleDriver");
 
@@ -252,8 +252,8 @@ public class Chat {
 					pstmt.close();
 					
 					
-					while (true/*!Thread.currentThread().isInterrupted()*/) {
-						// 데이터베이스에서 최근 메시지 조회
+					while (true /*!Thread.currentThread().isInterrupted()*/) {
+						// 데이터베이스에서 최근 메시지 조회'
 						String sql2 = "SELECT name, content, messagenum from "
 								+ "(select * FROM testuser.MESSAGE m join CHATUSER u "
 								+ "on m.userid = u.userid WHERE m.roomID = ? ORDER BY m.messagenum desc) "
@@ -266,8 +266,10 @@ public class Chat {
 						while (rs.next()) {
 							String username = rs.getString("name");
 							String content = rs.getString("content");
-							System.out.println("chat1lastMsgNum:" + lastMsgNum);
-							System.out.println("chat1:messagenum" + rs.getInt("messagenum"));
+							
+							System.out.println("chat2lastMsgNum: " + lastMsgNum);
+							System.out.println("chat2:messagenum: " + rs.getInt("messagenum"));
+							
 							if (!username.equals(session.getName()) && lastMsgNum < rs.getInt("messagenum")) {
 								System.out.println(username + ": " + content);
 								lastMsgNum = rs.getInt("messagenum");
@@ -284,19 +286,9 @@ public class Chat {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				System.out.println("여기까지 출력 되니?");
 			}
 		}).start();
 
-		
-		
-		// 메시지 전송, 출력 대기
-		// 이부분 돌아가다가 수신도 가능하게 바꾸기
-		try {
-			Thread.sleep(100);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		
 //		System.out.print(session.getName()+": ");
 		String input = scanner.nextLine();
@@ -320,6 +312,7 @@ public class Chat {
                 System.out.println("메시지 전송 중 오류가 발생했습니다.");
                 e.printStackTrace();
             }
+            System.out.print(session.getName()+": ");
         }
         
         System.out.println("채팅방에서 나갔습니다.");

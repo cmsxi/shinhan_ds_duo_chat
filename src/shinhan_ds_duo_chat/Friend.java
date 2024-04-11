@@ -94,8 +94,6 @@ public class Friend {
 		
 	}
 	
-	
-	
 	public void exit() {
 		System.exit(0);
 	}

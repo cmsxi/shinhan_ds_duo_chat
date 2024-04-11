@@ -3,11 +3,8 @@ package shinhan_ds_duo_chat;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
-
-import shinhan_ds_duo_chat.model.User;
 
 public class UserInfo {
 	private Scanner scanner = new Scanner(System.in);
