@@ -17,9 +17,6 @@ public class Start {
 	public Start() {
 		try {
 
-			// session setting
-			// session = new Session("1234", "최민서", "010-1234-1234", "1234");
-
 			Class.forName("oracle.jdbc.OracleDriver");
 
 			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "testuser", "test1234");
@@ -136,7 +133,7 @@ public class Start {
 
 	}
 
-	public void menu() {
+	public String menu() {
 		System.out.println();
 		System.out.println("[메뉴]");
 		System.out.println("1. 친구목록");
@@ -144,6 +141,7 @@ public class Start {
 		System.out.println("3. 내정보");
 		System.out.print("메뉴선택 : ");
 		String menuNO = scanner.nextLine();
+		return menuNO;
 	}
 
 
@@ -151,30 +149,4 @@ public class Start {
 		System.exit(0);
 	}
 
-	public static void main(String[] args) {
-		Start start = new Start();
-		try {
-			start.logo();
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		while (true) {
-			try {
-				session = start.list();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			if(session != null) {
-				break;
-			}
-		}
-		
-		while(true) {
-			start.menu();
-		}
-		
-		
-	}
 }

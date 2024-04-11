@@ -14,15 +14,15 @@ public class Friend {
 	private Connection conn;
 	private Session session;
 
-	public Friend() {
+	public Friend(Session session) {
 		try {
 
 			// session setting
-			session = new Session("1234", "최민서", "010-1234-1234", "1234");
+			this.session = session;
 
 			Class.forName("oracle.jdbc.OracleDriver");
 
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "scott", "tiger");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "testuser", "test1234");
 		} catch (Exception e) {
 			e.printStackTrace();
 			exit();
@@ -33,6 +33,7 @@ public class Friend {
 		System.out.println();
 		System.out.println("[친구목록]");
 		System.out.println("0. 친구추가");
+		System.out.println("1. 뒤로가기");
 		try {
 			String sql = "select userid , name , phoneNumber , password  from friend a join usertable b on a.userId2 = b.userId where userid1 = ?";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -56,7 +57,7 @@ public class Friend {
 			exit();
 		}
 
-		// Menu();
+
 
 		System.out.print("메뉴선택 : ");
 		String menuNO = scanner.nextLine();
@@ -64,8 +65,15 @@ public class Friend {
 
 		switch (menuNO) {
 		case "0" -> create();
+		case "1" -> back();
 		}
 	}
+	
+	public void back() {
+		
+	}
+	
+	
 	public void create() {
 		
 		
@@ -88,9 +96,6 @@ public class Friend {
 			e.printStackTrace();
 			exit();
 		}
-	
-		list();
-		
 		
 	}
 	
@@ -100,8 +105,4 @@ public class Friend {
 		System.exit(0);
 	}
 
-	public static void main(String[] args) {
-		Friend friend = new Friend();
-		friend.list();
-	}
 }
