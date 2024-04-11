@@ -1,11 +1,7 @@
 package shinhan_ds_duo_chat;
 
 public class Main {
-<<<<<<< HEAD
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-=======
 	static Session session = null;
 
 	static Friend friend = null;
@@ -41,7 +37,6 @@ public class Main {
 			}
 
 		}
->>>>>>> 286be918e7e8eabe7ef5747a797c46b45d0c2061
 
 	}
 

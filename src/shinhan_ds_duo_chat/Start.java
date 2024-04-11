@@ -15,11 +15,7 @@ public class Start {
 
 	public Start() {
 		try {
-<<<<<<< HEAD
-			// session setting
-			// session = new Session("1234", "최민서", "010-1234-1234", "1234");
-=======
->>>>>>> 286be918e7e8eabe7ef5747a797c46b45d0c2061
+
 
 			Class.forName("oracle.jdbc.OracleDriver");
 
@@ -160,33 +156,4 @@ public class Start {
 	public void exit() {
 		System.exit(0);
 	}
-
-<<<<<<< HEAD
-	public static void main(String[] args) {
-		Start start = new Start();
-		try {
-			start.logo();
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		while (true) {
-			try {
-				session = start.list();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			if(session != null) {
-				break;
-			}
-		}
-		
-		while(true) {
-			start.menu();
-		}	
-		
-	}
-=======
->>>>>>> 286be918e7e8eabe7ef5747a797c46b45d0c2061
 }
