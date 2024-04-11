@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import shinhan_ds_duo_chat.model.ChatRoom;
+import shinhan_ds_duo_chat.model.User;
 
 public class Chat {
 	private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -21,7 +22,7 @@ public class Chat {
 			this.session = session;
 			Class.forName("oracle.jdbc.OracleDriver");
 
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "testuser", "test1234");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.166:1521:xe", "testuser", "test1234");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -34,7 +35,7 @@ public class Chat {
 		System.out.println("[채팅방 목록]");
 		try {
 			// 현재 유저가 참여 중인 채팅방 목록 조회
-			String sql = "SELECT r.roomID, r.roomName, r.recentMsg, r.recentTime "
+			String sql = "SELECT r.roomID, r.roomName "
 					+ "FROM CHATROOM r JOIN USERJOINROOM u ON r.roomID = u.roomID WHERE u.userID = ?"
 					+ "ORDER BY r.recentMsg DESC";
 			
@@ -50,11 +51,10 @@ public class Chat {
 				// 채팅방 정보 출력
 				chatroom.setRoomID(rs.getString("roomID"));
 				chatroom.setRoomName(rs.getString("roomName"));
-				chatroom.setRecentMsg(rs.getString("recentMsg"));
-				chatroom.setRecentTime(rs.getDate("recentTime"));
-				// 메시지 시간 조금 더 자세하게 하기
+//				chatroom.setRecentMsg(rs.getString("recentMsg"));
+//				chatroom.setRecentTime(rs.getDate("recentTime"));
 
-				System.out.printf("(%d) 방 이름: %s \n최근 메시지: %s\n%s\n\n", chatroomNum++, chatroom.getRoomName(), chatroom.getRecentMsg(), chatroom.getRecentTime());
+				System.out.printf("(%d) roomID: %s \n방 이름: %s \n\n", chatroomNum++, chatroom.getRoomID(), chatroom.getRoomName());
 			}
 			
 			// 참여 중 채팅방 없을 시 출력 
@@ -127,7 +127,7 @@ public class Chat {
 			PreparedStatement pstmt = conn.prepareStatement(sql, new String[] {"roomID"});
 			pstmt.setString(1, roomName);
 			pstmt.setString(2, "(채팅방이 새로 생성되었습니다)");
-//			pstmt.executeUpdate();
+			pstmt.executeUpdate();
 					
 			// 생성된 채팅방 ID 가져오기
 			ResultSet generatedKeys = pstmt.getGeneratedKeys();
@@ -152,37 +152,42 @@ public class Chat {
 				pstmtSelf.setString(2, roomId);
 				pstmtSelf.executeUpdate();
 
-				System.out.print("초대할 친구의 이름을 쉼표로 구분하여 입력해주세요: ");
+				friendList();
 				
-				String[] friendNames = {};
+				System.out.print("초대할 친구의 계정(userID)을 쉼표로 구분하여 입력해주세요: ");
+				
+				String[] friendIDs = {};
 				try {
-					friendNames = br.readLine().split(",\\s*");
+					friendIDs = br.readLine().split(",\\s*");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				
 
-				for (String friendName : friendNames) {
+				for (String friendID : friendIDs) {
 					// 친구의 userID 가져오기
-					System.out.println(friendName);
-					String selectFriendSql = "SELECT userID FROM USERTABLE WHERE name = ?";
+//					System.out.println(friendID);
+					String selectFriendSql = "SELECT userID, name FROM USERTABLE WHERE userid = ?";
 					PreparedStatement pstmtFriend = conn.prepareStatement(selectFriendSql);
-					pstmtFriend.setString(1, friendName);
+					pstmtFriend.setString(1, friendID);
 					ResultSet rs = pstmtFriend.executeQuery();
-
+					
+					User friend = new User();
+					
 					if (rs.next()) {
-						String friendId = rs.getString("userID");
+						friend.setUserId(rs.getString("userID"));
+						friend.setName(rs.getString("name"));
 
 						// 친구를 채팅방에 추가
 						String insertFriendSql = "INSERT INTO userJoinRoom (userID, roomID) VALUES (?, ?)";
 						PreparedStatement pstmtInsertFriend = conn.prepareStatement(insertFriendSql);
-						pstmtInsertFriend.setString(1, friendId);
+						pstmtInsertFriend.setString(1, friend.getUserId());
 						pstmtInsertFriend.setString(2, roomId);
 						pstmtInsertFriend.executeUpdate();
 
-						System.out.println(friendName + "님을 초대했습니다.");
+						System.out.println(friend.getName() + "님을 초대했습니다.");
 					} else {
-						System.out.println(friendName + "님을 찾을 수 없습니다.");
+						System.out.println(friend.getName() + "님을 찾을 수 없습니다.");
 						
 					}
 					
@@ -192,30 +197,59 @@ public class Chat {
 				System.out.println("채팅방 생성에 실패하였습니다.");
 				list();
 			}
-			pstmt.executeUpdate();
+//			pstmt.executeUpdate();
 			menu();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
 
+	
+	public void friendList() {
+		System.out.println();
+		System.out.println("[친구목록]");
+		try {
+			String sql = "select userid , name , phoneNumber , password  from friend a join usertable b on a.userId2 = b.userId where userid1 = ?";
+			PreparedStatement pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, session.getUserId());
+			ResultSet rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				User user = new User();
+				user.setUserId(rs.getString("userId"));
+				user.setName(rs.getString("name"));
+				user.setPhoneNumber(rs.getString("phoneNumber"));
+
+				System.out.println(user.getUserId() + " " + user.getName() + " " + user.getPhoneNumber());
+
+			}
+			rs.close();
+			pstmt.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			exit();
+		}
+
+	}
+	
 	public void enter() {
 		ChatRoom chatroom = new ChatRoom();
 		
-		System.out.print("참여하고자 하는 채팅방 이름을 입력해주세요: ");
+		System.out.print("참여하고자 하는 채팅방의 roomID를 입력해주세요: ");
 		
-		String roomName = "";
+		String roomID = "";
 		try {
-			roomName = br.readLine();
+			roomID = br.readLine();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		chatroom.setRoomName(roomName);
+		chatroom.setRoomName(roomID);
 		
 		try {
-			String sql = "SELECT roomID FROM chatroom WHERE roomName = ?";
+			String sql = "SELECT roomID FROM chatroom WHERE roomID = ?";
 			PreparedStatement pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, roomName);
+			pstmt.setString(1, roomID);
 			ResultSet rs = pstmt.executeQuery();
 			
 			if(!rs.next()) {
@@ -283,15 +317,23 @@ public class Chat {
 							if (!username.equals(session.getName()) && lastMsgNum < rs.getInt("messagenum")) {
 								System.out.println(username + ": " + content);
 								lastMsgNum = rs.getInt("messagenum");
+								
+//								String sql3 = "UPDATE chatroom set recentmsg=? where roomID = ?";
+//								
+//								PreparedStatement pstmt3 = conn.prepareStatement(sql3);
+//								pstmt3.setString(1, content);
+//								pstmt3.setString(2,  chatroom.getRoomID());
+//								int rs3 = pstmt3.executeUpdate();
+//								
+//								pstmt3.close();
 							}
 						}
 						
-
 						rs.close();
 						pstmt.close();
 
 						// 일정 시간마다 메시지를 조회하기 위해 스레드를 잠시 멈춤
-						Thread.sleep(1000);
+						Thread.sleep(500);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

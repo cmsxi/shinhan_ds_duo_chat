@@ -22,7 +22,7 @@ public class Friend {
 
 			Class.forName("oracle.jdbc.OracleDriver");
 
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "testuser", "test1234");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.166:1521/xe", "testuser", "test1234");
 		} catch (Exception e) {
 			e.printStackTrace();
 			exit();
