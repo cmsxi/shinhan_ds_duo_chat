@@ -89,6 +89,11 @@ public class Start {
 			} else {
 				System.out.println("회원정보가 일치하지 않습니다.");
 			}
+			
+			
+			rs.close();
+			pstmt.close();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			exit();
@@ -126,6 +131,9 @@ public class Start {
 				} else {
 					System.out.println("해당 정보로 가입할수 없습니다.");
 				}
+			
+				pstmt.close();
+				
 			} catch (Exception e) {
 				System.out.println("해당 정보로 가입할수 없습니다.");
 			}

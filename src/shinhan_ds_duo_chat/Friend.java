@@ -92,6 +92,8 @@ public class Friend {
 			} else {
 				System.out.println("친구가 등록 되었습니다.");
 			}
+			pstmt.close();
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			exit();

@@ -79,6 +79,7 @@ public class UserInfo {
 				
 				
 			}
+			pstmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			exit();
@@ -107,8 +108,9 @@ public class UserInfo {
 					System.out.println("탈퇴되었습니다.");
 					exit();
 				}
-				
+				pstmt.close();
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			exit();
