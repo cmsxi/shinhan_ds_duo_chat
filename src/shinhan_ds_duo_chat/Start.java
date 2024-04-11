@@ -22,7 +22,7 @@ public class Start {
 
 			Class.forName("oracle.jdbc.OracleDriver");
 
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "scott", "tiger");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "testuser", "test1234");
 		} catch (Exception e) {
 			e.printStackTrace();
 			exit();
@@ -30,7 +30,16 @@ public class Start {
 	}
 
 	public void logo() {
-		System.out.println("로고");
+		System.out.println("            _                       _              _             _   \r\n"
+				+ "           (_)                     ( )            | |           | |  \r\n"
+				+ " _ __ ___   _  _ __    __ _  _   _ |/  ___    ___ | |__    __ _ | |_ \r\n"
+				+ "| '_ ` _ \\ | || '_ \\  / _` || | | |   / __|  / __|| '_ \\  / _` || __|\r\n"
+				+ "| | | | | || || | | || (_| || |_| |   \\__ \\ | (__ | | | || (_| || |_ \r\n"
+				+ "|_| |_| |_||_||_| |_| \\__, | \\__,_|   |___/  \\___||_| |_| \\__,_| \\__|\r\n"
+				+ "                       __/ |                                         \r\n"
+				+ "                      |___/                                          ");
+		
+		
 	}
 
 	public Session list() {
