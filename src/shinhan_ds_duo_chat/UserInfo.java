@@ -11,15 +11,15 @@ public class UserInfo {
 	private Connection conn;
 	private Session session;
 
-	public UserInfo() {
+	public UserInfo(Session session) {
 		try {
 
 			// session setting
-			session = new Session("1234", "최민서", "010-1234-1234", "1234");
+			this.session = session;
 
 			Class.forName("oracle.jdbc.OracleDriver");
 
-			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "scott", "tiger");
+			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/xe", "testuser", "test1234");
 		} catch (Exception e) {
 			e.printStackTrace();
 			exit();
@@ -76,6 +76,7 @@ public class UserInfo {
 				
 				
 			}
+			pstmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			exit();
@@ -104,8 +105,9 @@ public class UserInfo {
 					System.out.println("탈퇴되었습니다.");
 					exit();
 				}
-				
+				pstmt.close();
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			exit();
@@ -118,8 +120,4 @@ public class UserInfo {
 		System.exit(0);
 	}
 
-	public static void main(String[] args) {
-		UserInfo userInfo = new UserInfo();
-		userInfo.list();
-	}
 }

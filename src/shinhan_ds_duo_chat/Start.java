@@ -15,8 +15,11 @@ public class Start {
 
 	public Start() {
 		try {
+<<<<<<< HEAD
 			// session setting
 			// session = new Session("1234", "최민서", "010-1234-1234", "1234");
+=======
+>>>>>>> 286be918e7e8eabe7ef5747a797c46b45d0c2061
 
 			Class.forName("oracle.jdbc.OracleDriver");
 
@@ -28,7 +31,16 @@ public class Start {
 	}
 
 	public void logo() {
-		System.out.println("로고");
+		System.out.println("            _                       _              _             _   \r\n"
+				+ "           (_)                     ( )            | |           | |  \r\n"
+				+ " _ __ ___   _  _ __    __ _  _   _ |/  ___    ___ | |__    __ _ | |_ \r\n"
+				+ "| '_ ` _ \\ | || '_ \\  / _` || | | |   / __|  / __|| '_ \\  / _` || __|\r\n"
+				+ "| | | | | || || | | || (_| || |_| |   \\__ \\ | (__ | | | || (_| || |_ \r\n"
+				+ "|_| |_| |_||_||_| |_| \\__, | \\__,_|   |___/  \\___||_| |_| \\__,_| \\__|\r\n"
+				+ "                       __/ |                                         \r\n"
+				+ "                      |___/                                          ");
+		
+		
 	}
 
 	public Session list() {
@@ -81,6 +93,11 @@ public class Start {
 			} else {
 				System.out.println("회원정보가 일치하지 않습니다.");
 			}
+			
+			
+			rs.close();
+			pstmt.close();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			exit();
@@ -118,6 +135,9 @@ public class Start {
 				} else {
 					System.out.println("해당 정보로 가입할수 없습니다.");
 				}
+			
+				pstmt.close();
+				
 			} catch (Exception e) {
 				System.out.println("해당 정보로 가입할수 없습니다.");
 			}
@@ -125,7 +145,7 @@ public class Start {
 
 	}
 
-	public void menu() {
+	public String menu() {
 		System.out.println();
 		System.out.println("[메뉴]");
 		System.out.println("1. 친구목록");
@@ -133,6 +153,7 @@ public class Start {
 		System.out.println("3. 내정보");
 		System.out.print("메뉴선택 : ");
 		String menuNO = scanner.nextLine();
+		return menuNO;
 	}
 
 
@@ -140,6 +161,7 @@ public class Start {
 		System.exit(0);
 	}
 
+<<<<<<< HEAD
 	public static void main(String[] args) {
 		Start start = new Start();
 		try {
@@ -165,4 +187,6 @@ public class Start {
 		}	
 		
 	}
+=======
+>>>>>>> 286be918e7e8eabe7ef5747a797c46b45d0c2061
 }
