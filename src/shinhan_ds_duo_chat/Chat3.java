@@ -11,19 +11,19 @@ import java.sql.SQLException;
 
 import shinhan_ds_duo_chat.model.ChatRoom;
 
-public class Chat {
+public class Chat3 {
 	private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private Connection conn;
 	private static Session session;
 	
 	public static void main(String[] args) {
-		session = new Session("a", "a", "010-1234-5678", "123");
+		session = new Session("b", "b", "010-1234-5678", "123");
 		
-		Chat chat = new Chat();
+		Chat3 chat = new Chat3();
 		chat.list();
 	}
 	
-	public Chat() {
+	public Chat3() {
 		try {
 			Class.forName("oracle.jdbc.OracleDriver");
 
@@ -306,7 +306,7 @@ public class Chat {
 						pstmt.close();
 
 						// 일정 시간마다 메시지를 조회하기 위해 스레드를 잠시 멈춤
-						Thread.sleep(1000);
+						Thread.sleep(200);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -317,13 +317,13 @@ public class Chat {
 		
 		
 		// 메시지 전송, 출력 대기
-		// 이부분 돌아가다가 수신도 가능하게 바꾸기
 		try {
-			Thread.sleep(100);
+			Thread.sleep(500);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+		// 이부분 돌아가다가 수신도 가능하게 바꾸기
+
 		System.out.print("채팅에 참여하고자 하면 ENTER키를 눌러주세요");
 //		System.out.print("입력> ");
 		String input = " ";
