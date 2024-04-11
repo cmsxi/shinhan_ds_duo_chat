@@ -16,19 +16,20 @@ public class Chat {
 	private Connection conn;
 	private static Session session;
 	
-	public static void main(String[] args) {
-		session = new Session("a", "a", "010-1234-5678", "123");
-		
-		Chat chat = new Chat();
-		chat.list();
-	}
+//	public static void main(String[] args) {
+//		session = new Session("a", "a", "010-1234-5678", "123");
+//		
+//		Chat chat = new Chat();
+//		chat.list();
+//	}
 	
-	public Chat() {
+	public Chat(Session session) {
 		try {
+			this.session = session;
 			Class.forName("oracle.jdbc.OracleDriver");
 
 			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "testuser", "test1234");
-			System.out.println("DB 접속 성공");
+//			System.out.println("DB 접속 성공");
 
 		} catch (Exception e) {
 			e.printStackTrace();
