@@ -16,20 +16,12 @@ public class Chat {
 	private Connection conn;
 	private static Session session;
 	
-//	public static void main(String[] args) {
-//		session = new Session("a", "a", "010-1234-5678", "123");
-//		
-//		Chat chat = new Chat();
-//		chat.list();
-//	}
-	
 	public Chat(Session session) {
 		try {
 			this.session = session;
 			Class.forName("oracle.jdbc.OracleDriver");
 
 			conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "testuser", "test1234");
-//			System.out.println("DB 접속 성공");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -38,6 +30,7 @@ public class Chat {
 	}
 
 	public void list() {
+		System.out.println();
 		System.out.println("[채팅방 목록]");
 		try {
 			// 현재 유저가 참여 중인 채팅방 목록 조회
@@ -61,7 +54,7 @@ public class Chat {
 				chatroom.setRecentTime(rs.getDate("recentTime"));
 				// 메시지 시간 조금 더 자세하게 하기
 
-				System.out.printf("(%d)\n방 이름: %s \n최근 메시지: %s\n%s\n\n", chatroomNum++, chatroom.getRoomName(), chatroom.getRecentMsg(), chatroom.getRecentTime());
+				System.out.printf("(%d) 방 이름: %s \n최근 메시지: %s\n%s\n\n", chatroomNum++, chatroom.getRoomName(), chatroom.getRecentMsg(), chatroom.getRecentTime());
 			}
 			
 			// 참여 중 채팅방 없을 시 출력 
@@ -80,12 +73,15 @@ public class Chat {
 	}
 	
 	public void menu() {
+
 		System.out.println();
 		System.out.println("[채팅방]");
 		System.out.println("1. 채팅방 목록");
 		System.out.println("2. 채팅방 생성");
 		System.out.println("3. 채팅방 참여");
 		System.out.println("(그 외 입력 시 뒤로가기)");
+
+		System.out.println();
 		System.out.print("실행할 메뉴를 선택해주세요: ");
 		
 		String menuNum = "";
@@ -114,6 +110,7 @@ public class Chat {
 
 	public void create() {
 		try {
+			System.out.println();
 			System.out.println("[채팅방 생성]");
 			System.out.print("방 이름을 입력해주세요: ");
 			
@@ -129,10 +126,8 @@ public class Chat {
 					+ "VALUES (SEQ_RID.nextval, ?, ?, SYSDATE)";
 			PreparedStatement pstmt = conn.prepareStatement(sql, new String[] {"roomID"});
 			pstmt.setString(1, roomName);
-			pstmt.setString(2, "채팅방이 새로 생성되었습니다.");
-			pstmt.executeUpdate();
-
-//            int rows = pstmt.executeUpdate();
+			pstmt.setString(2, "(채팅방이 새로 생성되었습니다)");
+//			pstmt.executeUpdate();
 					
 			// 생성된 채팅방 ID 가져오기
 			ResultSet generatedKeys = pstmt.getGeneratedKeys();
@@ -165,9 +160,11 @@ public class Chat {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				
 
 				for (String friendName : friendNames) {
 					// 친구의 userID 가져오기
+					System.out.println(friendName);
 					String selectFriendSql = "SELECT userID FROM USERTABLE WHERE name = ?";
 					PreparedStatement pstmtFriend = conn.prepareStatement(selectFriendSql);
 					pstmtFriend.setString(1, friendName);
@@ -189,32 +186,24 @@ public class Chat {
 						
 					}
 					
-					menu();
+					
 				}
 			} else {
 				System.out.println("채팅방 생성에 실패하였습니다.");
 				list();
 			}
+			pstmt.executeUpdate();
+			menu();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
-//	public static void main(String[] args) {
-//		Chat chat = new Chat();
-//		chat.list();
-//		chat.create();
-//		
-//		String chatroom = scanner.nextLine();
-//		chat.enter(chatroom);
-//	}
 
 	public void enter() {
 		ChatRoom chatroom = new ChatRoom();
 		
 		System.out.print("참여하고자 하는 채팅방 이름을 입력해주세요: ");
 		
-//		String roomName = scanner.nextLine();
 		String roomName = "";
 		try {
 			roomName = br.readLine();
@@ -241,7 +230,6 @@ public class Chat {
 		}
 		
 		
-		// 어 근데 서버가 chatroom 정보 가지고 잇으면 됨
 		System.out.println("채팅방에 접속했습니다. 메시지를 입력하세요. (종료하려면 exit 입력)");
 		
 		// 메시지 수신
@@ -250,7 +238,7 @@ public class Chat {
 			public void run() {
 				try {
 					int lastMsgNum = 0;
-					// 초기 접속 시 메시지 출력
+					// 초기 접속 시 기존 메시지 출력
 					String sql = "SELECT name, content, messagenum from "
 							+ "(select * FROM testuser.MESSAGE m join USERTABLE u "
 							+ "on m.userid = u.userid WHERE m.roomID = ? ORDER BY m.messagenum desc) "
@@ -270,9 +258,7 @@ public class Chat {
 						}
 						System.out.println("\n" + username + ": " + content);
 						
-//						if (!username.equals(session.getName())) {
-//							
-//						}	
+
 						lastMsgNum = rs.getInt("messagenum");
 					}
 					
@@ -280,7 +266,7 @@ public class Chat {
 					pstmt.close();
 					
 					
-					while (true/*!Thread.currentThread().isInterrupted()*/) {
+					while (true) {
 						// 데이터베이스에서 최근 메시지 조회
 						String sql2 = "SELECT name, content, messagenum from "
 								+ "(select * FROM testuser.MESSAGE m join USERTABLE u "
@@ -294,8 +280,6 @@ public class Chat {
 						while (rs.next()) {
 							String username = rs.getString("name");
 							String content = rs.getString("content");
-//							System.out.println("chat1lastMsgNum:" + lastMsgNum);
-//							System.out.println("chat1:messagenum" + rs.getInt("messagenum"));
 							if (!username.equals(session.getName()) && lastMsgNum < rs.getInt("messagenum")) {
 								System.out.println(username + ": " + content);
 								lastMsgNum = rs.getInt("messagenum");
@@ -326,7 +310,6 @@ public class Chat {
 		}
 		
 		System.out.print("채팅에 참여하고자 하면 ENTER키를 눌러주세요");
-//		System.out.print("입력> ");
 		String input = " ";
         while (!(input.equals("exit"))) {
         	try {
@@ -335,7 +318,6 @@ public class Chat {
     			e.printStackTrace();
     		}
         	     	
-//        	System.out.print("\n입력> ");
             try {
                 if(input.equals("")) continue;
             	// 입력 메시지 데이터베이스에 저장

@@ -1,29 +1,27 @@
-package shinhan_ds_duo_chat;
+package shinhan_ds_duo_chat.temp;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Scanner;
 
 import shinhan_ds_duo_chat.model.ChatRoom;
 
-public class Chat3 {
-	private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+public class Chat2 {
+	private static Scanner scanner = new Scanner(System.in);
 	private Connection conn;
 	private static Session session;
 	
 	public static void main(String[] args) {
 		session = new Session("b", "b", "010-1234-5678", "123");
 		
-		Chat3 chat = new Chat3();
+		Chat2 chat = new Chat2();
 		chat.list();
 	}
 	
-	public Chat3() {
+	public Chat2() {
 		try {
 			Class.forName("oracle.jdbc.OracleDriver");
 
@@ -79,7 +77,6 @@ public class Chat3 {
 	}
 	
 	public void menu() {
-		System.out.println();
 		System.out.println("[채팅방]");
 		System.out.println("1. 채팅방 목록");
 		System.out.println("2. 채팅방 생성");
@@ -87,13 +84,7 @@ public class Chat3 {
 		System.out.println("(그 외 입력 시 뒤로가기)");
 		System.out.print("실행할 메뉴를 선택해주세요: ");
 		
-		String menuNum = "";
-		try {
-			menuNum = br.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+		String menuNum = scanner.nextLine();
 		
 		if("1".equals(menuNum)) {
 			list();
@@ -115,13 +106,7 @@ public class Chat3 {
 		try {
 			System.out.println("[채팅방 생성]");
 			System.out.print("방 이름을 입력해주세요: ");
-			
-			String roomName = "";
-			try {
-				roomName = br.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			String roomName = scanner.nextLine();
 
 			// 채팅방 생성
 			String sql = "INSERT INTO CHATROOM(roomID, roomName, recentmsg, recenttime) "
@@ -157,17 +142,11 @@ public class Chat3 {
 				pstmtSelf.executeUpdate();
 
 				System.out.print("초대할 친구의 이름을 쉼표로 구분하여 입력해주세요: ");
-				
-				String[] friendNames = {};
-				try {
-					friendNames = br.readLine().split(",\\s*");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				String[] friendNames = scanner.nextLine().split(",\\s*");
 
 				for (String friendName : friendNames) {
 					// 친구의 userID 가져오기
-					String selectFriendSql = "SELECT userID FROM USERTABLE WHERE name = ?";
+					String selectFriendSql = "SELECT userID FROM usertable WHERE name = ?";
 					PreparedStatement pstmtFriend = conn.prepareStatement(selectFriendSql);
 					pstmtFriend.setString(1, friendName);
 					ResultSet rs = pstmtFriend.executeQuery();
@@ -198,28 +177,14 @@ public class Chat3 {
 			e.printStackTrace();
 		}
 	}
-	
-//	public static void main(String[] args) {
-//		Chat chat = new Chat();
-//		chat.list();
-//		chat.create();
-//		
-//		String chatroom = scanner.nextLine();
-//		chat.enter(chatroom);
-//	}
+
 
 	public void enter() {
 		ChatRoom chatroom = new ChatRoom();
 		
 		System.out.print("참여하고자 하는 채팅방 이름을 입력해주세요: ");
 		
-//		String roomName = scanner.nextLine();
-		String roomName = "";
-		try {
-			roomName = br.readLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		String roomName = scanner.nextLine();
 		chatroom.setRoomName(roomName);
 		
 		try {
@@ -251,7 +216,7 @@ public class Chat3 {
 					int lastMsgNum = 0;
 					// 초기 접속 시 메시지 출력
 					String sql = "SELECT name, content, messagenum from "
-							+ "(select * FROM testuser.MESSAGE m join USERTABLE u "
+							+ "(select * FROM testuser.MESSAGE m join usertable u "
 							+ "on m.userid = u.userid WHERE m.roomID = ? ORDER BY m.messagenum desc) "
 							+ "where ROWNUM <= 10 ORDER BY messagenum";
 					PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -267,7 +232,7 @@ public class Chat3 {
 							System.out.println(content);
 							continue;
 						}
-						System.out.println("\n" + username + ": " + content);
+						System.out.println(username + ": " + content);
 						
 //						if (!username.equals(session.getName())) {
 //							
@@ -279,10 +244,10 @@ public class Chat3 {
 					pstmt.close();
 					
 					
-					while (true/*!Thread.currentThread().isInterrupted()*/) {
-						// 데이터베이스에서 최근 메시지 조회
+					while (true /*!Thread.currentThread().isInterrupted()*/) {
+						// 데이터베이스에서 최근 메시지 조회'
 						String sql2 = "SELECT name, content, messagenum from "
-								+ "(select * FROM testuser.MESSAGE m join USERTABLE u "
+								+ "(select * FROM testuser.MESSAGE m join usertable u "
 								+ "on m.userid = u.userid WHERE m.roomID = ? ORDER BY m.messagenum desc) "
 								+ "where ROWNUM = 1";
 						pstmt = conn.prepareStatement(sql2);
@@ -293,8 +258,10 @@ public class Chat3 {
 						while (rs.next()) {
 							String username = rs.getString("name");
 							String content = rs.getString("content");
-//							System.out.println("chat1lastMsgNum:" + lastMsgNum);
-//							System.out.println("chat1:messagenum" + rs.getInt("messagenum"));
+							
+//							System.out.println("chat2lastMsgNum: " + lastMsgNum);
+//							System.out.println("chat2:messagenum: " + rs.getInt("messagenum"));
+							
 							if (!username.equals(session.getName()) && lastMsgNum < rs.getInt("messagenum")) {
 								System.out.println(username + ": " + content);
 								lastMsgNum = rs.getInt("messagenum");
@@ -306,7 +273,7 @@ public class Chat3 {
 						pstmt.close();
 
 						// 일정 시간마다 메시지를 조회하기 위해 스레드를 잠시 멈춤
-						Thread.sleep(200);
+						Thread.sleep(2000);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -314,30 +281,19 @@ public class Chat3 {
 			}
 		}).start();
 
-		
-		
-		// 메시지 전송, 출력 대기
 		try {
-			Thread.sleep(500);
+			Thread.sleep(100);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// 이부분 돌아가다가 수신도 가능하게 바꾸기
-
+		
 		System.out.print("채팅에 참여하고자 하면 ENTER키를 눌러주세요");
-//		System.out.print("입력> ");
 		String input = " ";
-        while (!(input.equals("exit"))) {
-        	try {
-    			input = br.readLine();
-    		} catch (IOException e) {
-    			e.printStackTrace();
-    		}
-        	     	
-//        	System.out.print("\n입력> ");
+        while (!(input = scanner.nextLine()).equals("exit")) {
+        	System.out.print("입력: ");
             try {
-                if(input.equals("")) continue;
-            	// 입력 메시지 데이터베이스에 저장
+                // 입력 메시지 데이터베이스에 저장
+            	if(input.equals("")) continue;
                 String sql = "INSERT INTO message (messagenum, content, chatTime, userID, roomID) VALUES (SEQ_MID.nextval, ?, CURRENT_TIMESTAMP, ?, ?)";
                 PreparedStatement pstmt = conn.prepareStatement(sql);
                 pstmt.setString(1, input);
