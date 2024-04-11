@@ -351,7 +351,7 @@ public class Chat {
 			e.printStackTrace();
 		}
 		
-		System.out.print("채팅에 참여하고자 하면 ENTER키를 눌러주세요");
+		System.out.println("채팅을 입력해주세요");
 		String input = " ";
         while (!(input.equals("exit"))) {
         	try {
@@ -361,7 +361,7 @@ public class Chat {
     		}
         	     	
             try {
-                if(input.equals("")) continue;
+                if(input.equals("") || input.equals("exit")) continue;
             	// 입력 메시지 데이터베이스에 저장
                 String sql = "INSERT INTO message (messagenum, content, chatTime, userID, roomID) VALUES (SEQ_MID.nextval, ?, CURRENT_TIMESTAMP, ?, ?)";
                 PreparedStatement pstmt = conn.prepareStatement(sql);
