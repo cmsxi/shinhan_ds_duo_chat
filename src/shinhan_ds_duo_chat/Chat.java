@@ -16,6 +16,7 @@ public class Chat {
 	private static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private Connection conn;
 	private static Session session;
+
 	
 	public Chat(Session session) {
 		try {
@@ -23,6 +24,7 @@ public class Chat {
 			Class.forName("oracle.jdbc.OracleDriver");
 
 			conn = DriverManager.getConnection("jdbc:oracle:thin:@192.168.0.166:1521:xe", "testuser", "test1234");
+		
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -265,9 +267,12 @@ public class Chat {
 		
 		
 		System.out.println("채팅방에 접속했습니다. 메시지를 입력하세요. (종료하려면 exit 입력)");
-		
-		// 메시지 수신
-		new Thread(new Runnable() {
+		Runnable r = new Runnable() {
+			
+			public void stop() {
+				System.exit(0);
+			}
+			
 			@Override
 			public void run() {
 				try {
@@ -339,9 +344,12 @@ public class Chat {
 					e.printStackTrace();
 				}
 			}
-		}).start();
+		};
+		// 메시지 수신
+		Thread a = new Thread();
 
-		
+		a.start();
+		r.stop();
 		
 		// 메시지 전송, 출력 대기
 		// 이부분 돌아가다가 수신도 가능하게 바꾸기
@@ -380,10 +388,12 @@ public class Chat {
                 System.out.println("메시지 전송 중 오류가 발생했습니다.");
                 e.printStackTrace();
             }
+            
+            
         }
         
         System.out.println("채팅방에서 나갔습니다.");
-		
+
 	}
 
 }
